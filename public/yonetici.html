@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yönetici Paneli</title>
+  <link rel="stylesheet" href="css/yonetici.css">
+</head>
+<body>
+<header class="topbar">
+  <h1>Yönetici Paneli</h1>
+  <div class="topbar-actions">
+    <button id="refresh" class="btn">Yenile</button>
+    <button id="logout" class="btn btn-danger">Çıkış</button>
+  </div>
+</header>
+
+<main class="main">
+  <div class="grid">
+
+    <!-- ========= MENÜ / ÜRÜN YÖNETİMİ ========= -->
+    <section class="card">
+      <h2>Menü Yönetimi</h2>
+
+      <!-- Ürün ekleme formu -->
+      <div class="form-group">
+        <label for="kategoriSelect">Kategori</label>
+        <select id="kategoriSelect" class="input"></select>
+      </div>
+
+      <div class="form-row">
+  <div class="form-group">
+    <label for="urunAd">Ürün Adı</label>
+    <input type="text" id="urunAd" class="input" placeholder="Örn: Latte">
+  </div>
+
+  <div class="form-group">
+    <label for="urunFiyat">Fiyat (₺)</label>
+    <input type="number" step="0.01" min="0" id="urunFiyat" class="input" placeholder="Örn: 75">
+  </div>
+
+  <div class="form-group">
+    <label for="urunKdv">KDV (%)</label>
+    <input type="number" step="1" min="0" max="40" id="urunKdv" class="input" placeholder="Örn: 10">
+  </div>
+
+  <div class="form-group form-group--button">
+    <button id="urunEkleBtn" class="btn btn-primary">Ürün Ekle</button>
+  </div>
+</div>
+
+
+      <hr>
+
+      <!-- Menü tablosu -->
+      <div class="table-wrapper">
+        <table>
+              <thead>
+    <tr>
+      <th>Kategori</th>
+      <th>Ürün</th>
+      <th>Fiyat (₺)</th>
+      <th>KDV (%)</th>
+      <th>Aktif</th>
+      <th>Tükendi</th>
+      <th>İşlemler</th>
+    </tr>
+    </thead>
+
+          <tbody id="menuTableBody">
+          <!-- JS dolduracak -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========= KAMPANYA YÖNETİMİ ========= -->
+    <section class="card">
+      <h2>Kampanya Yönetimi</h2>
+
+      <!-- Kampanya formu -->
+      <div class="form-group">
+        <label for="kampAd">Kampanya Adı</label>
+        <input type="text" id="kampAd" class="input" placeholder="Örn: 5 kahve al 1 bedava">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="gerekliPuan">Gerekli Puan</label>
+          <input type="number" id="gerekliPuan" class="input" min="1" value="5">
+        </div>
+        <div class="form-group">
+          <label for="kampTur">Kampanya Türü</label>
+          <select id="kampTur" class="input">
+            <option value="ucretsiz_urun">Ücretsiz Ürün</option>
+            <option value="yuzde_indirim">Yüzde İndirim</option>
+            <option value="tutar_indirim">Tutar İndirimi</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Dinamik alanlar -->
+      <div id="kmp-ucretsiz" class="kamp-opt">
+        <label for="kampOdulUrun">Ödül Ürün</label>
+        <select id="kampOdulUrun" class="input"></select>
+      </div>
+
+      <div id="kmp-yuzde" class="kamp-opt" style="display:none;">
+        <label for="kampIndirimOran">İndirim Oranı (%)</label>
+        <input type="number" id="kampIndirimOran" class="input" min="1" max="100" placeholder="Örn: 20">
+      </div>
+
+      <div id="kmp-tutar" class="kamp-opt" style="display:none;">
+        <label for="kampIndirimTutar">İndirim Tutarı (₺)</label>
+        <input type="number" id="kampIndirimTutar" class="input" min="1" placeholder="Örn: 30">
+      </div>
+
+      <div class="form-row form-row--end">
+        <button id="kampEkleBtn" class="btn btn-primary">Kampanya Ekle</button>
+      </div>
+
+      <hr>
+
+      <!-- Kampanya tablosu -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+          <tr>
+            <th>Ad</th>
+            <th>Tür</th>
+            <th>Puan</th>
+            <th>Ödül / İndirim</th>
+            <th>Aktif</th>
+            <th class="right">İşlemler</th>
+          </tr>
+          </thead>
+          <tbody id="kampanyaTableBody">
+          <!-- JS dolduracak -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="yonetici.js"></script>
+</body>
+</html>

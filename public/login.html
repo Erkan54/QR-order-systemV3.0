@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Giriş Yap</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/login.css" />
+  
+  <script>
+    // --- EN KOLAY: file:// veya yanlış port ise backend'e taşı ---
+    (function ensureSameOrigin(){
+      var DEFAULT_ORIGIN = window.location.origin;
+      var u = new URL(location.href);
+      var api = u.searchParams.get("api");
+      if (api) sessionStorage.setItem("api_origin", api);
+      var target = sessionStorage.getItem("api_origin") || DEFAULT_ORIGIN;
+      try {
+        var to = new URL(target);
+        if (location.protocol === "file:" || (to.origin !== location.origin)) {
+          var file = (location.pathname.split("/").pop() || "login.html");
+          var qs = location.search; var hs = location.hash;
+          location.replace(to.origin + "/" + file + qs + hs);
+        }
+      } catch(e) {}
+    })();
+  </script>
+</head>
+<body>
+  <header>
+    <div class="container header-row">
+      <div class="brand">🍽️ QR Sipariş</div>
+      <div class="masa-badge">Masa <span id="masa-chip">--</span></div>
+    </div>
+  </header>
+
+  <main class="container auth-container">
+    <section class="panel">
+      <div class="panel-header">
+        <h1>Giriş Yap</h1>
+        <p>Hesabınıza erişmek için bilgilerinizi girin.</p>
+      </div>
+      
+      <div class="panel-body">
+        <form id="loginForm" class="form-col">
+          <div class="input-group">
+            <label for="email">E-posta</label>
+            <input id="email" name="email" type="email" placeholder="ornek@site.com" required />
+          </div>
+
+          <div class="input-group">
+            <label for="sifre">Şifre</label>
+            <input id="sifre" name="sifre" type="password" placeholder="••••••••" required />
+          </div>
+
+          <button type="submit" class="btn primary btn-lg">Giriş Yap</button>
+        </form>
+
+        <p class="muted-text">
+          Hesabın yok mu? <a href="register.html">Kayıt ol</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function initMasa(){
+      const u=new URL(location.href);
+      const m=u.searchParams.get("masa")||u.searchParams.get("masa_id");
+      if(m && Number(m)>0){ sessionStorage.setItem("masa_id",String(parseInt(m,10))); }
+      const chip=document.getElementById("masa-chip");
+      const saved=sessionStorage.getItem("masa_id");
+      if(chip) chip.textContent=saved?("#"+saved):"—";
+    })();
+
+    document.getElementById("loginForm").addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      const body={
+        email: document.getElementById("email").value.trim(),
+        sifre: document.getElementById("sifre").value
+      };
+      const res=await fetch("/api/login",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(body),
+        credentials:"include"
+      });
+      const json=await res.json().catch(()=>({}));
+
+      if(res.ok && (json.message||"").toLowerCase().includes("başar")){
+        const me = await fetch("/api/me",{credentials:"include"});
+        if(!me.ok){
+          alert("Oturum doğrulanamadı.");
+          return;
+        }
+        const masa=sessionStorage.getItem("masa_id");
+        location.href = masa ? `index.html?masa=${masa}` : "index.html";
+      }else{
+        alert(json.error || json.message || "Giriş yapılamadı.");
+      }
+    });
+  </script>
+</body>
+</html>

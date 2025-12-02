@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sipariş Takip Paneli</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <header>
+    <h1>🧾 Sipariş Takip Paneli</h1>
+    <button id="refresh">🔄 Yenile</button>
+    <button id="temizleBtn" class="clear-btn">🧹 Temizle</button>
+  </header>
+
+  <main>
+    <table id="orders-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Masa</th>
+          <th>Durum</th>
+          <th>Tarih</th>
+          <th>Toplam</th>
+          <th>Ürünler</th>
+          <th>İşlem</th>
+        </tr>
+      </thead>
+      <tbody id="orders-body">
+        <!-- JS ile doldurulacak -->
+      </tbody>
+    </table>
+  </main>
+
+  <footer>
+    <p>© 2025 QR Sipariş Sistemi</p>
+  </footer>
+
+  <script src="admin.js"></script>
+</body>
+</html>

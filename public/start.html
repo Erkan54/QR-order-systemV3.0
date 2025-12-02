@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>QR Giriş</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/start.css" />
+</head>
+<body>
+  <header>
+    <div class="container header-row">
+      <div class="brand">🍽️ QR Sipariş</div>
+      <div class="masa-badge">Masa <span id="masa-chip">--</span></div>
+    </div>
+  </header>
+
+  <main class="container main-center">
+    <div id="ok" class="card hidden">
+      <div class="icon-circle success">✅</div>
+      <h1 class="title">Hoş Geldiniz!</h1>
+      <p class="desc">Masanız başarıyla doğrulandı.<br>Sipariş vermek için hazırsınız.</p>
+      
+      <div class="cta-group">
+        <button id="btnHizli" class="btn btn-primary">
+          <span>⚡ Hızlı Sipariş Ver</span>
+        </button>
+        <button id="btnGiris" class="btn btn-secondary">
+          <span>👤 Giriş Yap / Kayıt Ol</span>
+        </button>
+      </div>
+      <p class="sub-text">Üyeliksiz devam edebilirsiniz.</p>
+    </div>
+
+    <div id="err" class="card hidden">
+      <div class="icon-circle error">📷</div>
+      <h1 class="title">QR Bulunamadı</h1>
+      <p class="desc">Bu sayfaya yalnızca masanızdaki QR kodunu okutarak erişebilirsiniz.</p>
+      <button class="btn btn-outline" onclick="location.reload()">Tekrar Dene</button>
+    </div>
+  </main>
+
+  <script src="start.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+/* =========================
+   MODERN START CSS (Giriş Sayfası)
+   ========================= */
+
+:root {
+  --primary: #0aa07a;       /* Ana Yeşil */
+  --primary-dark: #078a68;  /* Koyu Yeşil */
+  --bg-color: #f4f6f9;      /* Çok hafif gri arka plan */
+  --text-main: #2d3436;     /* Koyu antrasit yazı */
+  --text-muted: #636e72;    /* Gri açıklama yazısı */
+  --card-bg: #ffffff;       /* Kart Beyazı */
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.06); /* Yumuşak gölge */
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif; /* Font değişti */
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Header --- */
+header {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 16px 20px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: -0.5px;
+  color: var(--text-main);
+}
+
+.masa-badge {
+  background: #eefbf6;
+  color: var(--primary-dark);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid #d1fae5;
+}
+
+/* --- Main Layout --- */
+.main-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  margin-top: 60px; /* Header payı */
+}
+
+/* --- Kart Tasarımı --- */
+.card {
+  background: var(--card-bg);
+  width: 100%;
+  max-width: 400px;
+  padding: 40px 30px;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* --- İkonlar ve Başlıklar --- */
+.icon-circle {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+}
+
+.success { background: #eefbf6; border: 1px solid #d1fae5; }
+.error { background: #fef2f2; border: 1px solid #fee2e2; }
+
+.title {
+  margin: 0 0 10px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.desc {
+  margin: 0 0 30px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.sub-text {
+  margin-top: 15px;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+/* --- Butonlar --- */
+.cta-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.btn:active { transform: scale(0.98); }
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 15px rgba(10, 160, 122, 0.3);
+}
+.btn-primary:hover { background: var(--primary-dark); }
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: var(--text-main);
+  border: 1px solid transparent;
+}
+.btn-secondary:hover { background: #e5e7eb; }
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid #e5e7eb;
+  color: var(--text-muted);
+}
+.btn-outline:hover { border-color: var(--text-muted); color: var(--text-main); }
+
+/* --- Yardımcılar --- */
+.hidden { display: none !important; }
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}

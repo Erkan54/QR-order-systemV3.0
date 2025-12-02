@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📊 Patron Kontrol Paneli</title>
+  <link rel="stylesheet" href="patron.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">☕</div>
+        <div class="brand-text">
+          <div class="brand-title">QR POS</div>
+          <div class="brand-sub">Patron Paneli</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="#overview" class="nav-link active">Genel Bakış</a>
+        <a href="#charts" class="nav-link">Grafikler</a>
+        <a href="#urunler" class="nav-link">Ürünler</a>
+        <a href="#musteriler" class="nav-link">Müşteriler</a>
+        <a href="#siparisler" class="nav-link">Siparişler</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div id="todayText" class="today-text"></div>
+        <small class="sidebar-hint">Veriler otomatik canlı yenilenir.</small>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1>📊 Patron Analiz Paneli</h1>
+          <p class="topbar-sub">Canlı ciro, sipariş ve müşteri analizi</p>
+        </div>
+        <div class="topbar-right">
+          <div class="range-switch">
+            <button type="button" class="range-btn active" data-range="today">Bugün</button>
+            <button type="button" class="range-btn" data-range="week">Bu Hafta</button>
+            <button type="button" class="range-btn" data-range="month">Bu Ay</button>
+            <button type="button" class="range-btn" data-range="all">Tümü</button>
+          </div>
+          <button id="arsivleBtn" type="button" class="btn btn-danger">🗃️ Gün Sonu</button>
+          <button id="refresh" type="button" class="btn btn-ghost">🔄 Yenile</button>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- KPI Kartları -->
+        <section id="overview" class="card-grid kpi-grid">
+          <article class="card kpi-card">
+            <div class="kpi-label">Bugünkü Ciro</div>
+            <div class="kpi-value" id="kpiTodayCiro">₺0,00</div>
+            <div class="kpi-sub">Toplam ciro: <span id="kpiTotalCiro">₺0,00</span></div>
+          </article>
+
+          <article class="card kpi-card">
+            <div class="kpi-label">Bugünkü Sipariş</div>
+            <div class="kpi-value" id="kpiTodayOrders">0</div>
+            <div class="kpi-sub">Toplam sipariş: <span id="kpiTotalOrders">0</span></div>
+          </article>
+
+          <article class="card kpi-card">
+            <div class="kpi-label">Ortalama Sepet</div>
+            <div class="kpi-value" id="kpiAvgTicket">₺0,00</div>
+            <div class="kpi-sub">Tüm zaman ortalaması</div>
+          </article>
+
+          <article class="card kpi-card">
+            <div class="kpi-label">Aktif Sipariş</div>
+            <div class="kpi-value" id="kpiActiveOrders">0</div>
+            <div class="kpi-sub">
+              Teslim: <span id="kpiDelivered">0</span> · İptal: <span id="kpiCancelled">0</span>
+            </div>
+          </article>
+        </section>
+
+        <!-- Grafikler -->
+        <section id="charts" class="card-grid charts-grid">
+          <article class="card">
+            <div class="card-header">
+              <h3>📈 Günlük Ciro (Son Günler)</h3>
+              <span class="card-hint">Son 7 gün</span>
+            </div>
+            <canvas id="gunlukChart"></canvas>
+          </article>
+
+          <article class="card">
+            <div class="card-header">
+              <h3>🍽️ Kategori Bazlı Ciro</h3>
+              <span class="card-hint">En çok kazandıranlar</span>
+            </div>
+            <canvas id="kategoriChart"></canvas>
+          </article>
+
+          <article class="card">
+            <div class="card-header">
+              <h3>🕒 Saat Bazlı Sipariş Dağılımı</h3>
+              <span class="card-hint">Bugün</span>
+            </div>
+            <canvas id="saatChart"></canvas>
+          </article>
+
+          <article class="card">
+            <div class="card-header">
+              <h3>⭐ En Çok Satan Ürünler</h3>
+              <span class="card-hint">Adet ve ciro</span>
+            </div>
+            <canvas id="urunChart"></canvas>
+          </article>
+        </section>
+
+        <!-- En çok satan ürünler tablosu -->
+        <section id="urunler" class="card">
+          <div class="card-header">
+            <h3>⭐ En Çok Satan Ürünler (Top 10)</h3>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table" id="urunTablosu">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Ürün</th>
+                  <th>Satış Adedi</th>
+                  <th>Ciro (₺)</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Müşteri analizi -->
+        <section id="musteriler" class="card">
+          <div class="card-header">
+            <h3>👥 En Çok Sipariş Veren Müşteriler</h3>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table" id="musteriTablosu">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Müşteri</th>
+                  <th>Sipariş Sayısı</th>
+                  <th>Toplam Harcama (₺)</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Canlı sipariş listesi -->
+        <section id="siparisler" class="card">
+          <div class="card-header">
+            <h3>📋 Canlı Sipariş Listesi</h3>
+            <span class="card-hint">Son siparişler</span>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table" id="tumSiparisler">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Masa</th>
+                  <th>Durum</th>
+                  <th>Tarih</th>
+                  <th>Toplam (₺)</th>
+                  <th>Ürünler</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>© 2025 QR Sipariş Sistemi · Patron Paneli</span>
+      </footer>
+    </div>
+  </div>
+
+  <script src="patron.js"></script>
+</body>
+</html>

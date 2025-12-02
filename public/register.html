@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Kayıt Ol</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/register.css">
+
+  <script>
+    // --- Backend Origin Kontrolü (Diğer sayfalarla aynı) ---
+    (function ensureSameOrigin(){
+      var DEFAULT_ORIGIN = window.location.origin;
+      var u = new URL(location.href);
+      var api = u.searchParams.get("api");
+      if (api) sessionStorage.setItem("api_origin", api);
+      var target = sessionStorage.getItem("api_origin") || DEFAULT_ORIGIN;
+      try {
+        var to = new URL(target);
+        if (location.protocol === "file:" || (to.origin !== location.origin)) {
+          var file = (location.pathname.split("/").pop() || "register.html");
+          var qs = location.search; var hs = location.hash;
+          location.replace(to.origin + "/" + file + qs + hs);
+        }
+      } catch(e) {}
+    })();
+  </script>
+</head>
+
+<body>
+  <header>
+    <div class="container header-row">
+      <div class="brand">🍽️ QR Sipariş</div>
+      <div class="masa-badge">Masa <span id="masa-chip">--</span></div>
+    </div>
+  </header>
+
+  <main class="container auth-container">
+    <section class="panel">
+      <div class="panel-header">
+        <h1>Kayıt Ol</h1>
+        <p>Hızlı sipariş ve fırsatlar için hesap oluşturun.</p>
+      </div>
+
+      <div class="panel-body">
+        <form id="registerForm" class="form-col">
+          
+          <div class="input-group">
+            <label for="ad_soyad">Ad Soyad</label>
+            <input type="text" id="ad_soyad" name="ad_soyad" placeholder="Adınız Soyadınız" required />
+          </div>
+
+          <div class="input-group">
+            <label for="email">E-posta</label>
+            <input type="email" id="email" name="email" placeholder="ornek@site.com" required />
+          </div>
+
+          <div class="input-group">
+            <label for="telefon">Telefon <span class="optional">(İsteğe bağlı)</span></label>
+            <input type="text" id="telefon" name="telefon" placeholder="0555..." />
+          </div>
+
+          <div class="input-group">
+            <label for="sifre">Şifre</label>
+            <input type="password" id="sifre" name="sifre" placeholder="••••••••" required />
+          </div>
+
+          <button type="submit" class="btn primary btn-lg">Hesap Oluştur</button>
+        </form>
+
+        <p class="muted-text">
+          Zaten hesabın var mı? <a href="login.html">Giriş yap</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // 1. Masa bilgisini URL veya Session'dan çekip Header'a yazalım
+    (function initMasa(){
+      const u=new URL(location.href);
+      const m=u.searchParams.get("masa")||u.searchParams.get("masa_id");
+      if(m && Number(m)>0){ sessionStorage.setItem("masa_id",String(parseInt(m,10))); }
+      const chip=document.getElementById("masa-chip");
+      const saved=sessionStorage.getItem("masa_id");
+      if(chip) chip.textContent=saved?("#"+saved):"—";
+    })();
+
+    // 2. Kayıt İşlemi
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      
+      try {
+        const res = await fetch("/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        const json = await res.json();
+        
+        if (res.ok || json.message === "Kayıt başarılı") {
+          alert("Kayıt tamamlandı! Giriş sayfasına yönlendiriliyorsunuz...");
+          // Masa bilgisini kaybetmemek için URL'e ekleyelim
+          const masa = sessionStorage.getItem("masa_id");
+          window.location.href = masa ? `login.html?masa=${masa}` : "login.html";
+        } else {
+          alert(json.error || json.message || "Bir hata oluştu.");
+        }
+      } catch (err) {
+        alert("Sunucu hatası: " + err.message);
+      }
+    });
+  </script>
+</body>
+</html>

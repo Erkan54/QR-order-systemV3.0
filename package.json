@@ -1,0 +1,35 @@
+{
+  "name": "qr_kod_siparis_sistemi",
+  "version": "3.0.0",
+  "description": "QR kodlu, dinamik masalarla çalışan kahve & tatlı sipariş sistemi",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "express",
+    "qr",
+    "siparis",
+    "kahve",
+    "tatli",
+    "admin-panel",
+    "dinamik-masa"
+  ],
+  "author": "Ahmet",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "express-session": "^1.18.2",
+    "mysql2": "^3.15.3",
+    "pdfkit": "^0.17.2",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
