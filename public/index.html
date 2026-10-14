@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>QR Sipariş</title>
+  <title>AHENK kafe | QR Sipariş</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Poppins:wght@600;700;800&family=Raleway:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
   <script>
     // --- EN KOLAY: file:// veya yanlış port ise backend'e taşı ---
-    (function ensureSameOrigin(){
+    (function ensureSameOrigin() {
       var DEFAULT_ORIGIN = window.location.origin;
       var u = new URL(location.href);
       var api = u.searchParams.get("api");
@@ -15,64 +19,137 @@
 
       var target = sessionStorage.getItem("api_origin") || DEFAULT_ORIGIN;
 
-      try{
+      try {
         var to = new URL(target);
         if (location.protocol === "file:" || (to.origin !== location.origin)) {
           var file = (location.pathname.split("/").pop() || "index.html");
           var qs = location.search; var hs = location.hash;
           location.replace(to.origin + "/" + file + qs + hs);
         }
-      }catch(e){}
+      } catch (e) { }
     })();
   </script>
+  <style>
+    /* Spinner Animasyonu */
+    .tracking-spinner {
+      width: 60px;
+      height: 60px;
+      border: 5px solid #e2e8f0;
+      border-top: 5px solid #4d7c3f;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Başarı Tick Stili */
+    .tracking-success-tick {
+      width: 60px;
+      height: 60px;
+      background: #f0f5f0;
+      color: #4d7c3f;
+      border-radius: 50%;
+      font-size: 2.2rem;
+      line-height: 60px;
+      font-weight: bold;
+      text-align: center;
+      animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes scaleUp {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+  </style>
 </head>
 
 <body>
   <header>
-  <div class="container header-row">
-    <div class="brand">🍽️ QR Sipariş</div>
-    <div class="header-right">
-      <div class="masa-chip">Masa: <span id="masa-chip">—</span></div>
-      <button id="goCartBtn" class="header-cart-btn">🛒</button>
+    <div class="container header-row">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-text">ahenk</span>
+      </a>
+      <div class="header-right">
+        <div class="masa-chip">Masa: <span id="masa-chip">—</span></div>
+        <button id="goCartBtn" class="header-cart-btn">Sepet 🛒</button>
+      </div>
     </div>
-  </div>
 
-  <div class="container">
-    <div id="category-nav" class="category-nav"></div>
-  </div>
-</header>
-  <!-- Kategori Navigasyonu -->
-  <div class="container">
-    <div id="category-nav" class="category-nav"></div>
-  </div>
-
-  <main class="container">
-
+    <div class="container">
+      <div id="category-nav" class="category-nav"></div>
+    </div>
+  </header>
 
   <main class="container">
     <div class="app-grid">
-      <!-- SOL: Menü -->
       <section aria-label="Menü">
+        <!-- KAMPANYA BANNER (menü içinde, ilk kategorinin hemen üstünde) -->
+        <div id="campaignStrip" onclick="openCampaignModal()"
+          style="display:flex; align-items:center; gap:10px; background:linear-gradient(135deg, rgba(43,24,16,0.72), rgba(61,35,20,0.72)); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(139,90,43,0.35); border-left:4px solid #8b5a2b; padding:10px 14px; border-radius:10px; margin-bottom:8px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+          <span style="font-size:0.9rem;">🎁</span>
+          <span style="flex:1; font-size:0.84rem; color:#f7eee9; font-weight:700; letter-spacing:0.3px;">Fırsatları & Kampanyaları Gör</span>
+          <span style="font-size:0.85rem; color:#e6c5ad; font-weight:bold;">›</span>
+        </div>
+
+        <div id="selectedCampaignInfo" class="hidden"
+          style="background:rgba(77,124,63,0.12); border:1px solid rgba(77,124,63,0.3); padding:6px 12px; border-radius:8px; font-size:0.8rem; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; color:#2e4a26;">
+          <div>🎉 <strong id="selectedCampaignName">Kampanya Adı</strong></div>
+          <button id="removeCampaignBtn"
+            style="background:none; border:none; color:#ef4444; cursor:pointer; font-weight:bold; font-size:1rem; line-height:1;">&times;</button>
+        </div>
+
         <div id="menu"></div>
       </section>
 
-      <!-- SAĞ: Sepet ve Kampanyalar -->
+      <div class="note-container" style="margin-top: 10px; margin-bottom: 10px;">
+        <div id="toggleNoteBtn" style="cursor: pointer; color: #c08738; font-weight: 600; font-size: 0.9rem;">
+          📝 Sipariş Notu Ekle
+        </div>
+        <textarea id="siparisNotuInput" class="hidden" rows="2" placeholder="Örn: Soğansız olsun, ketçap bol olsun..."
+          style="width: 100%; margin-top: 5px; padding: 8px; border: 1px solid #ddd; border-radius: 6px; resize: vertical;"></textarea>
+      </div>
+
       <aside aria-label="Sepet" class="panel" id="cart-panel">
         <div class="panel-header">Sepet</div>
         <div class="panel-body">
-          <!-- Kampanyalarım -->
+
           <div class="mb-10">
-            <label for="kampanyaSelect" class="block-lbl">🎁 Kampanyalarım</label>
-            <select id="kampanyaSelect">
-              <option value="">Kampanya seç (opsiyonel)</option>
-            </select>
-            <small class="muted">Giriş yaptıysanız haklarınız burada listelenir.</small>
+            <label class="block-lbl">🎁 Kampanyalar</label>
+
+            <div id="selectedCampaignInfoCart" class="hidden"
+              style="background:#e0f2f1; color:#00695c; padding:8px; border-radius:6px; font-size:0.85rem; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
+              <span id="selectedCampaignNameCart">Kampanya Adı</span>
+              <button id="removeCampaignBtnCart"
+                style="background:none; border:none; color:#d32f2f; cursor:pointer; font-weight:bold;">×</button>
+            </div>
+
+            <button class="btn add" onclick="openCampaignModal()"
+              style="background-color: #f3f4f6; color: #333; border: 1px dashed #ccc; width: 100%;">
+              Kampanya Seç / Değiştir
+            </button>
+
+            <small class="muted" style="display:block; margin-top:5px;">
+              Puanlı ödüller veya sepet fırsatlarını görmek için tıklayın.
+            </small>
           </div>
 
-          <!-- Sepet satırları -->
           <div id="cart-items"></div>
 
-          <!-- Özet -->
           <div class="mt-10">
             <table class="summary-table">
               <tr>
@@ -90,7 +167,6 @@
             </table>
           </div>
 
-          <!-- Sipariş Ver -->
           <div class="actions-row">
             <button id="siparisVerBtn" class="btn primary">Sipariş Ver</button>
           </div>
@@ -99,13 +175,193 @@
     </div>
   </main>
 
-  <!-- Sağ altta kullanıcı rozeti -->
+  <div id="floatingCart" class="fc">
+    <div id="fc-drawer" class="fc-drawer">
+      <div id="fc-handle" class="fc-handle">
+        <div class="fc-handle-bar"></div>
+      </div>
+      <div id="fc-items" class="fc-items"></div>
+    </div>
+    <div id="fc-footer" class="fc-footer">
+      <span>Toplam</span>
+      <strong id="fc-total">0.00 ₺</strong>
+    </div>
+  </div>
+
   <div id="user-badge" class="user-badge hidden">
     <div id="ub-name" class="user-badge__name">—</div>
     <div class="user-badge__points"><span id="ub-puan">0</span> puan</div>
   </div>
 
-  <!-- cache-bust için v paramı -->
-  <script src="script.js?v=4" defer></script>
+  <div id="confirmModal" class="modal-container hidden">
+    <div class="modal-box">
+      <h2>Sipariş Onayı</h2>
+
+      <div id="confirmList" class="confirm-list"></div>
+
+      <div class="confirm-prices">
+        <div class="row"><span>Ara Toplam</span><strong id="confirmAra">0₺</strong></div>
+        <div class="row" id="confirmIndirimRow" style="display:none;">
+          <span>İndirim</span><strong id="confirmIndirim">-0₺</strong>
+        </div>
+        <div class="row total"><span>Genel Toplam</span><strong id="confirmGenel">0₺</strong></div>
+      </div>
+
+      <div class="modal-buttons">
+        <button id="confirmCancel" class="btn-cancel">Vazgeç</button>
+        <button id="confirmOk" class="btn-ok">Onayla</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="campaignModal" class="modal-container hidden">
+    <div class="modal-box campaign-box" style="max-width: 600px; width: 95%; height: 80vh;">
+
+      <div class="modal-header">
+        <h3 id="wizardTitle" class="modal-title">Kampanyalar</h3>
+        <button id="closeCampaignModal" class="btn-close">×</button>
+      </div>
+
+      <div id="wizardListScreen" class="wizard-screen">
+        <div class="camp-group">
+          <h4 class="camp-group-title">🔥 Fırsatlar</h4>
+          <div id="firsatList" class="camp-list"></div>
+        </div>
+        <div class="camp-group">
+          <h4 class="camp-group-title">⭐ Puan Ödülleri</h4>
+          <div id="puanList" class="camp-list"></div>
+        </div>
+      </div>
+
+      <div id="wizardStepScreen" class="wizard-screen hidden">
+        <div id="wizardStepInfo"
+          style="padding: 15px; background: #f0fdfa; border-bottom: 1px solid #ccfbf1; color: #0f766e;">
+        </div>
+
+        <div id="wizardProductGrid" class="wizard-grid">
+        </div>
+
+        <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
+          <span id="wizardCounter" style="font-weight:bold; color:#555;">0 / 2 Seçildi</span>
+          <button id="wizardNextBtn" class="btn btn-primary" disabled>Devam Et</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="productModal" class="modal-container hidden">
+    <div class="modal-box product-modal-box">
+      <!-- Büyük Görsel Header -->
+      <div class="modal-header-image">
+        <img id="modalProductImage" src="" alt="Ürün Görseli"
+          style="width:100%; height:160px; object-fit:cover; border-radius:16px 16px 0 0;">
+        <button id="closeProductModal" class="btn-close-img">&times;</button>
+      </div>
+
+      <!-- Body: İsim + Varyasyon + Ekstra (kompakt) -->
+      <div class="modal-body" style="padding:12px 16px; max-height:45vh; overflow-y:auto;">
+        <h2 id="modalProductName" style="margin:0 0 2px 0; font-size:1.15rem; font-weight:700; color:#1a1a18;">Ürün Adı</h2>
+        <p id="modalProductDesc" style="color:#5a5a56; font-size:0.78rem; margin:0 0 10px 0;">Açıklama</p>
+
+        <!-- Varyasyonlar -->
+        <div class="option-group" id="variationGroup" style="display:none; margin-bottom:10px;">
+          <h3
+            style="font-size:0.78rem; margin:0 0 6px 0; color:#555; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">
+            Boyut / Varyant Seçimi <span style="color:red">*</span></h3>
+          <div id="variationContainer" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+        </div>
+
+        <!-- Ekstralar -->
+        <div class="option-group" id="extrasGroup" style="display:none; margin-bottom:6px;">
+          <h3
+            style="font-size:0.78rem; margin:0 0 6px 0; color:#555; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">
+            Ekstralar & Çıkar</h3>
+          <div id="extrasContainer" style="display:flex; flex-direction:column; gap:4px;"></div>
+        </div>
+      </div>
+
+      <!-- Footer: Adet + Sepete Ekle -->
+      <div class="modal-footer"
+        style="padding:10px 16px; border-top:1px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center; background:#fafafa; border-radius:0 0 16px 16px;">
+        <div class="quantity-control"
+          style="display:flex; align-items:center; gap:12px; background:#f0f0f0; padding:4px 12px; border-radius:16px;">
+          <button id="modalQtyMinus"
+            style="border:none; background:none; font-size:1rem; cursor:pointer; color:#333; font-weight:bold;">−</button>
+          <span id="modalQtyNum"
+            style="font-weight:bold; font-size:0.95rem; min-width:16px; text-align:center;">1</span>
+          <button id="modalQtyPlus"
+            style="border:none; background:none; font-size:1rem; cursor:pointer; color:#333; font-weight:bold;">+</button>
+        </div>
+        <button id="addToCartFinal" class="btn primary"
+          style="flex:1; margin-left:10px; border-radius:16px; font-weight:bold; font-size:0.75rem; padding:10px 0;">
+          Sepete Ekle - <span id="modalTotalPrice">0.00</span> ₺
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SİPARİŞ DURUM TAKİP MODALI ── -->
+  <div id="orderTrackingModal" class="modal-container hidden">
+    <div class="modal-box" style="max-width: 400px; text-align: center; padding: 30px 24px; border-radius: 24px;">
+
+      <!-- İkon ve Spinner Konteyneri -->
+      <div id="trackingIconContainer"
+        style="margin-bottom: 20px; display: flex; justify-content: center; align-items: center; position: relative; height: 80px;">
+        <!-- Spinner -->
+        <div class="tracking-spinner" id="trackingSpinner" style="position: absolute;"></div>
+        <!-- Başarı Tick (Başlangıçta gizli) -->
+        <div class="tracking-success-tick hidden" id="trackingSuccessTick" style="position: absolute;">✓</div>
+      </div>
+
+      <h3 id="trackingTitle" style="margin: 0 0 8px; font-size: 1.3rem; font-weight: 700; color: #1e293b;">Siparişiniz
+        Alındı!</h3>
+      <p id="trackingDesc" style="margin: 0 0 20px; font-size: 0.9rem; color: #64748b; line-height: 1.5;">
+        Siparişiniz onay için kasaya iletildi. Lütfen bekleyin...
+      </p>
+
+      <div
+        style="background: #f8fafc; border-radius: 16px; padding: 14px; margin-bottom: 24px; border: 1px solid #e2e8f0; text-align: left;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.82rem;">
+          <span style="color: #64748b; font-weight: 500;">Sipariş Numarası:</span>
+          <strong style="color: #334155;" id="trackingOrderId">#--</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.82rem;">
+          <span style="color: #64748b; font-weight: 500;">Sipariş Durumu:</span>
+          <strong style="color: #e28743;" id="trackingStatus">Beklemede</strong>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button id="btnCancelOrder" class="btn"
+          style="background: #fee2e2; color: #ef4444; margin: 0; font-size: 0.85rem; border-radius: 12px; padding: 12px 20px; font-weight: 600;"
+          onclick="cancelMyOrder()">
+          ❌ Siparişi İptal Et
+        </button>
+        <button id="btnCloseTrackingModal" class="btn primary hidden"
+          style="margin: 0; font-size: 0.85rem; border-radius: 12px; padding: 12px 24px; font-weight: 600;"
+          onclick="closeTrackingModal()">
+          Tamam
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align: center; background: transparent; padding: 18px 10px; margin-top: 10px;">
+    <div
+      style="width: 40px; height: 2px; background: linear-gradient(90deg, transparent, #4d7c3f, transparent); margin: 0 auto 10px;">
+    </div>
+    <p style="margin: 0; font-size: 0.78rem; color: #3d6332; font-weight: 600; letter-spacing: 0.5px;">
+      Ahmet Nurullah Erkan tarafından geliştirilmiştir
+    </p>
+    <p style="margin: 4px 0 0; font-size: 0.72rem; color: #70706a;">
+      ✉ <a href="mailto:ahmetnurullaherkan@gmail.com"
+        style="color: #4d7c3f; text-decoration: none;">ahmetnurullaherkan@gmail.com</a>
+    </p>
+  </div>
+
+  <script src="script.js?v=5" defer></script>
+
 </body>
+
 </html>

@@ -133,7 +133,9 @@ label {
   font-weight: 400;
 }
 
-input {
+input[type="text"],
+input[type="email"],
+input[type="password"] {
   width: 100%;
   padding: 14px 16px;
   border: 2px solid var(--border-color);
@@ -145,7 +147,9 @@ input {
   font-family: 'Poppins', sans-serif;
 }
 
-input:focus {
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
   outline: none;
   border-color: var(--primary);
   background: #fff;
@@ -218,4 +222,47 @@ input::placeholder {
   .panel-header h1 {
     font-size: 1.5rem;
   }
+}
+
+/* --- KVKK Checkbox --- */
+.checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  margin-top: 3px;
+  cursor: pointer;
+  accent-color: var(--primary);
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+
+.checkbox-group label {
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-left: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-group label a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.checkbox-group label a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
 }

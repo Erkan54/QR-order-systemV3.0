@@ -1,190 +1,358 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>📊 Patron Kontrol Paneli</title>
-  <link rel="stylesheet" href="patron.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patron Analiz Paneli</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="patron.css">
 </head>
 <body>
+
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">
-        <div class="brand-icon">☕</div>
-        <div class="brand-text">
-          <div class="brand-title">QR POS</div>
-          <div class="brand-sub">Patron Paneli</div>
-        </div>
+        <span class="material-icons-round">analytics</span>
+        <span>BOSS PANEL</span>
       </div>
-
+      
       <nav class="nav">
-        <a href="#overview" class="nav-link active">Genel Bakış</a>
-        <a href="#charts" class="nav-link">Grafikler</a>
-        <a href="#urunler" class="nav-link">Ürünler</a>
-        <a href="#musteriler" class="nav-link">Müşteriler</a>
-        <a href="#siparisler" class="nav-link">Siparişler</a>
+        <button class="nav-btn active" onclick="switchTab('ozet')">
+          <span class="material-icons-round">dashboard</span> Genel Özet
+        </button>
+        <button class="nav-btn" onclick="switchTab('urunler')">
+          <span class="material-icons-round">inventory_2</span> Ürün Analizi
+        </button>
+        <button class="nav-btn" onclick="switchTab('kategoriler')">
+          <span class="material-icons-round">category</span> Kategori Analizi
+        </button>
+        <button class="nav-btn" onclick="switchTab('kampanyalar')">
+          <span class="material-icons-round">campaign</span> Kampanyalar
+        </button>
+        <button class="nav-btn" onclick="switchTab('capraz')">
+          <span class="material-icons-round">hub</span> Çapraz Satış Analizi
+        </button>
+        <button class="nav-btn" onclick="switchTab('heatmap')">
+          <span class="material-icons-round">grid_on</span> Yoğunluk Haritası
+        </button>
+        <button class="nav-btn" onclick="switchTab('siparisler')">
+          <span class="material-icons-round">receipt_long</span> Aktif Siparişler
+        </button>
       </nav>
 
       <div class="sidebar-footer">
-        <div id="todayText" class="today-text"></div>
-        <small class="sidebar-hint">Veriler otomatik canlı yenilenir.</small>
+        <a href="index.html" class="back-link">
+          <span class="material-icons-round">arrow_back</span> Menüye Dön
+        </a>
       </div>
     </aside>
 
-    <div class="main">
+    <main class="main-content">
+      
       <header class="topbar">
-        <div class="topbar-left">
-          <h1>📊 Patron Analiz Paneli</h1>
-          <p class="topbar-sub">Canlı ciro, sipariş ve müşteri analizi</p>
-        </div>
-        <div class="topbar-right">
-          <div class="range-switch">
-            <button type="button" class="range-btn active" data-range="today">Bugün</button>
-            <button type="button" class="range-btn" data-range="week">Bu Hafta</button>
-            <button type="button" class="range-btn" data-range="month">Bu Ay</button>
-            <button type="button" class="range-btn" data-range="all">Tümü</button>
+        <div class="date-controls">
+          <div class="input-group">
+            <label>Başlangıç</label>
+            <input type="date" id="startDate">
           </div>
-          <button id="arsivleBtn" type="button" class="btn btn-danger">🗃️ Gün Sonu</button>
-          <button id="refresh" type="button" class="btn btn-ghost">🔄 Yenile</button>
+          <div class="input-group">
+            <label>Bitiş</label>
+            <input type="date" id="endDate">
+          </div>
+          <button class="btn-primary" onclick="refreshData()">
+            <span class="material-icons-round">refresh</span> Analiz Et
+          </button>
+        </div>
+
+        <div class="compare-controls">
+          <div class="input-group">
+            <label>Karşılaştırma Günü (Opsiyonel)</label>
+            <input type="date" id="compareDate">
+          </div>
+          <small class="hint">Grafikte 2. çizgi olarak eklenir</small>
         </div>
       </header>
 
-      <main class="content">
-        <!-- KPI Kartları -->
-        <section id="overview" class="card-grid kpi-grid">
-          <article class="card kpi-card">
-            <div class="kpi-label">Bugünkü Ciro</div>
-            <div class="kpi-value" id="kpiTodayCiro">₺0,00</div>
-            <div class="kpi-sub">Toplam ciro: <span id="kpiTotalCiro">₺0,00</span></div>
-          </article>
+      <!-- YENİ HIZLI TARİH FİLTRELERİ -->
+      <div class="quick-filters-container">
+        <div class="quick-filters">
+          <button class="quick-btn" onclick="setQuickDate('bugun')">Bugün</button>
+          <button class="quick-btn" onclick="setQuickDate('buhafta')">Bu Hafta</button>
+          <button class="quick-btn" onclick="setQuickDate('buay')">Bu Ay</button>
+          <button class="quick-btn" onclick="setQuickDate('buyil')">Bu Yıl</button>
+        </div>
+      </div>
 
-          <article class="card kpi-card">
-            <div class="kpi-label">Bugünkü Sipariş</div>
-            <div class="kpi-value" id="kpiTodayOrders">0</div>
-            <div class="kpi-sub">Toplam sipariş: <span id="kpiTotalOrders">0</span></div>
-          </article>
-
-          <article class="card kpi-card">
-            <div class="kpi-label">Ortalama Sepet</div>
-            <div class="kpi-value" id="kpiAvgTicket">₺0,00</div>
-            <div class="kpi-sub">Tüm zaman ortalaması</div>
-          </article>
-
-          <article class="card kpi-card">
-            <div class="kpi-label">Aktif Sipariş</div>
-            <div class="kpi-value" id="kpiActiveOrders">0</div>
-            <div class="kpi-sub">
-              Teslim: <span id="kpiDelivered">0</span> · İptal: <span id="kpiCancelled">0</span>
-            </div>
-          </article>
-        </section>
-
-        <!-- Grafikler -->
-        <section id="charts" class="card-grid charts-grid">
-          <article class="card">
-            <div class="card-header">
-              <h3>📈 Günlük Ciro (Son Günler)</h3>
-              <span class="card-hint">Son 7 gün</span>
-            </div>
-            <canvas id="gunlukChart"></canvas>
-          </article>
-
-          <article class="card">
-            <div class="card-header">
-              <h3>🍽️ Kategori Bazlı Ciro</h3>
-              <span class="card-hint">En çok kazandıranlar</span>
-            </div>
-            <canvas id="kategoriChart"></canvas>
-          </article>
-
-          <article class="card">
-            <div class="card-header">
-              <h3>🕒 Saat Bazlı Sipariş Dağılımı</h3>
-              <span class="card-hint">Bugün</span>
-            </div>
-            <canvas id="saatChart"></canvas>
-          </article>
-
-          <article class="card">
-            <div class="card-header">
-              <h3>⭐ En Çok Satan Ürünler</h3>
-              <span class="card-hint">Adet ve ciro</span>
-            </div>
-            <canvas id="urunChart"></canvas>
-          </article>
-        </section>
-
-        <!-- En çok satan ürünler tablosu -->
-        <section id="urunler" class="card">
-          <div class="card-header">
-            <h3>⭐ En Çok Satan Ürünler (Top 10)</h3>
+      <section id="tab-ozet" class="tab-content active">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-title">Toplam Ciro</div>
+            <div class="kpi-value" id="kpi-ciro">₺0.00</div>
           </div>
-          <div class="table-wrapper">
-            <table class="data-table" id="urunTablosu">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Ürün</th>
-                  <th>Satış Adedi</th>
-                  <th>Ciro (₺)</th>
-                </tr>
-              </thead>
+          <div class="kpi-card">
+            <div class="kpi-title">Net Kâr</div>
+            <div class="kpi-value positive" id="kpi-kar">₺0.00</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Toplam Maliyet</div>
+            <div class="kpi-value negative" id="kpi-maliyet">₺0.00</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Sipariş Sayısı</div>
+            <div class="kpi-value" id="kpi-siparis">0</div>
+          </div>
+        </div>
+
+        <div class="chart-container big-chart">
+          <h3>🕒 Saatlik Performans (09:00 - 23:00)</h3>
+          <canvas id="mainChart"></canvas>
+        </div>
+
+        <div class="tables-grid">
+          <div class="card">
+            <h3>🏆 En Çok Satan Ürünler (Adet)</h3>
+            <div class="table-responsive">
+              <table class="data-table" id="table-top-urunler">
+                <thead><tr><th>Ürün</th><th>Adet</th><th>Ciro</th><th>Kâr</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <h3>📉 En Yüksek Ciro Getirenler</h3>
+            <div class="table-responsive">
+              <table class="data-table" id="table-top-ciro">
+                <thead><tr><th>Ürün</th><th>Adet</th><th>Ciro</th><th>Kâr</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-urunler" class="tab-content">
+        <div class="filter-bar" style="margin-bottom: 20px;">
+          <select id="select-urun" onchange="analyzeProduct()" style="width: 100%; max-width: 400px; padding: 10px;">
+            <option value="">Bir Ürün Seçin...</option>
+          </select>
+        </div>
+        
+        <div id="product-details" class="hidden">
+          <div class="kpi-grid mini">
+            <div class="kpi-card"><div class="kpi-title">Satılan Adet</div><div class="kpi-value" id="p-adet">0</div></div>
+            <div class="kpi-card"><div class="kpi-title">Toplam Ciro</div><div class="kpi-value" id="p-ciro">₺0</div></div>
+            <div class="kpi-card"><div class="kpi-title">Toplam Kâr</div><div class="kpi-value positive" id="p-kar">₺0</div></div>
+          </div>
+          <div class="chart-container">
+            <canvas id="productChart"></canvas>
+          </div>
+        </div>
+
+        <div class="tables-grid" style="margin-top: 30px; grid-template-columns: repeat(3, 1fr);">
+          <div class="card">
+            <h3 style="color:var(--danger)">⬇️ En Az Satanlar</h3>
+            <div class="table-responsive">
+              <table class="data-table" id="table-bottom-urunler">
+                <thead><tr><th>Ürün</th><th>Adet</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <h3 style="color:var(--success)">🔥 Yükselen Trendler</h3>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">Önceki döneme göre satışı en çok artanlar</p>
+            <div class="table-responsive">
+              <table class="data-table" id="table-trend-up">
+                <thead><tr><th>Ürün</th><th>Değişim</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <h3 style="color:var(--text-muted)">🧊 Modası Geçenler</h3>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">Önceki döneme göre satışı en çok düşenler</p>
+            <div class="table-responsive">
+              <table class="data-table" id="table-trend-down">
+                <thead><tr><th>Ürün</th><th>Değişim</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-kategoriler" class="tab-content">
+        <div class="filter-bar" style="margin-bottom: 20px;">
+          <select id="select-kategori" onchange="analyzeCategory()" style="width: 100%; max-width: 400px; padding: 10px;">
+            <option value="">Bir Kategori Seçin...</option>
+          </select>
+        </div>
+
+        <div id="category-details" class="hidden">
+          <div class="row">
+            <div class="col">
+              <div class="chart-container">
+                <h3>Günlük Kategori Performansı</h3>
+                <canvas id="categoryChart"></canvas>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card">
+                <h3>Bu Kategorideki Ürünler</h3>
+                <table class="data-table" id="table-cat-products">
+                  <thead><tr><th>Ürün</th><th>Adet</th><th>Kâr</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card mt-20">
+          <h3>📊 Kategori Sıralaması</h3>
+          <table class="data-table" id="table-all-categories">
+            <thead><tr><th>Kategori</th><th>Adet</th><th>Ciro</th><th>Net Kâr</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tab-kampanyalar" class="tab-content">
+        <div class="card">
+          <h3>Kampanya Performansları</h3>
+          <div class="table-responsive">
+            <table class="data-table" id="table-campaigns">
+              <thead><tr><th>Kampanya</th><th>Kullanım</th><th>Ciro Etkisi</th><th>Hediye Maliyeti</th><th>Net Kâr</th><th>İşlem</th></tr></thead>
               <tbody></tbody>
             </table>
           </div>
-        </section>
+        </div>
 
-        <!-- Müşteri analizi -->
-        <section id="musteriler" class="card">
-          <div class="card-header">
-            <h3>👥 En Çok Sipariş Veren Müşteriler</h3>
+        <div id="campaign-detail-modal" class="modal hidden" style="display: flex; justify-content: center; align-items: center;">
+          <div class="modal-content" style="position: relative;">
+            
+            <span 
+              onclick="document.getElementById('campaign-detail-modal').classList.add('hidden')" 
+              style="position: absolute; top: 15px; right: 20px; font-size: 30px; font-weight: bold; color: #64748b; cursor: pointer; z-index: 1001; line-height: 1;">
+              &times;
+            </span>
+
+            <h2 id="modal-camp-title" style="margin-top: 0; padding-right: 30px;">Kampanya Detayı</h2>
+            
+            <div class="chart-container">
+              <canvas id="campaignChart"></canvas>
+            </div>
+            
+            <div class="card mt-20">
+              <h4>Bu Kampanyada Tüketilen Ürünler</h4>
+              <table class="data-table" id="table-camp-products">
+                <thead><tr><th>Ürün</th><th>Rolü</th><th>Adet</th><th>Maliyet</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
           </div>
-          <div class="table-wrapper">
-            <table class="data-table" id="musteriTablosu">
+        </div>
+      </section>
+
+      <!-- ÇAPRAZ SATIŞ ANALİZİ (YENİ) -->
+      <section id="tab-capraz" class="tab-content">
+        <div class="card" style="margin-bottom: 20px;">
+          <h3>🔗 Birlikte Satın Alma (Çapraz Satış) İlişkileri</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">
+            Müşterilerin aynı adisyonda birlikte sipariş ettikleri ürün kombinasyonları. Bu verileri kullanarak yeni kombolar veya kampanyalar oluşturabilirsiniz.
+          </p>
+          <div class="table-responsive">
+            <table class="data-table" id="table-cross-sell">
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Müşteri</th>
-                  <th>Sipariş Sayısı</th>
-                  <th>Toplam Harcama (₺)</th>
+                  <th>Ana Ürün</th>
+                  <th>Birlikte Alınan Ürün</th>
+                  <th>Birliktelik Oranı</th>
+                  <th>Ortalama Sepet Etkisi</th>
                 </tr>
               </thead>
-              <tbody></tbody>
+              <tbody>
+                <!-- Mock veriler JS ile doldurulacak -->
+              </tbody>
             </table>
           </div>
-        </section>
+        </div>
+        <div class="card">
+          <h3>💡 Fırsat Önerileri</h3>
+          <ul id="cross-sell-suggestions" style="list-style: none; padding: 0; display: grid; gap: 10px;">
+             <!-- Mock veriler JS ile doldurulacak -->
+          </ul>
+        </div>
+      </section>
 
-        <!-- Canlı sipariş listesi -->
-        <section id="siparisler" class="card">
-          <div class="card-header">
-            <h3>📋 Canlı Sipariş Listesi</h3>
-            <span class="card-hint">Son siparişler</span>
+      <!-- YOĞUNLUK HARİTASI (YENİ) -->
+      <section id="tab-heatmap" class="tab-content">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3>🗓️ Prime Time Isı Haritası (Haftalık Yoğunluk)</h3>
+            <div>
+               <label style="font-size:0.85rem; margin-right:5px; color:var(--text-muted);">Belirli Bir Hafta Seç:</label>
+               <input type="week" id="heatmapWeek" onchange="setHeatmapWeek()" style="padding: 5px; border: 1px solid var(--border); border-radius: 4px;">
+            </div>
           </div>
-          <div class="table-wrapper">
-            <table class="data-table" id="tumSiparisler">
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">
+            Hangi gün ve saatlerde işletmenin daha yoğun olduğunu gösterir. Koyu renkler yüksek yoğunluğu (ciro/sipariş sayısını) temsil eder.
+          </p>
+          <div style="overflow-x: auto;">
+            <div id="heatmap-container" style="min-width: 700px; display: grid; grid-template-columns: 80px repeat(7, 1fr); gap: 4px;">
+              <!-- Javascript ile doldurulacak -->
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: flex-end; margin-top: 15px; gap: 10px; font-size: 0.85rem; color: var(--text-muted);">
+            <span>Sakin</span>
+            <div style="width: 20px; height: 20px; background-color: rgba(99, 102, 241, 0.1); border-radius: 4px;"></div>
+            <div style="width: 20px; height: 20px; background-color: rgba(99, 102, 241, 0.4); border-radius: 4px;"></div>
+            <div style="width: 20px; height: 20px; background-color: rgba(99, 102, 241, 0.7); border-radius: 4px;"></div>
+            <div style="width: 20px; height: 20px; background-color: rgba(99, 102, 241, 1); border-radius: 4px;"></div>
+            <span>Çok Yoğun</span>
+          </div>
+        </div>
+      </section>
+
+
+      <section id="tab-siparisler" class="tab-content">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3>📋 Aktif Siparişler</h3>
+            <button class="btn-primary" onclick="loadActiveOrders()" style="width:auto; padding:8px 16px; font-size:0.85rem; display:flex; align-items:center; gap:5px;">
+              <span class="material-icons-round" style="font-size:1.1rem;">refresh</span> Yenile
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-active-orders">
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Masa</th>
+                  <th>Sipariş ID</th>
+                  <th>Masa No</th>
+                  <th>Sipariş Zamanı</th>
+                  <th>Detaylar</th>
+                  <th>Sipariş Notu</th>
+                  <th>Toplam Tutar</th>
                   <th>Durum</th>
-                  <th>Tarih</th>
-                  <th>Toplam (₺)</th>
-                  <th>Ürünler</th>
                 </tr>
               </thead>
-              <tbody></tbody>
+              <tbody>
+                <tr><td colspan="7" class="text-center">Yükleniyor...</td></tr>
+              </tbody>
             </table>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
 
-      <footer class="footer">
-        <span>© 2025 QR Sipariş Sistemi · Patron Paneli</span>
-      </footer>
-    </div>
+    </main>
   </div>
 
   <script src="patron.js"></script>
+  <script src="auth-guard.js"></script>
 </body>
 </html>

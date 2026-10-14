@@ -1,41 +1,61 @@
-// start.js — QR zorunlu; manuel masa girişi yok
-
 function $(s){return document.querySelector(s);}
-function parsePos(v){const n=Number(v);const i=Math.trunc(n);return Number.isFinite(i)&&i>0?i:null;}
 
-function extractMasa(){
-  const u=new URL(location.href);
-  const keys=["masa_id","masa","table","t","m"];
-  for(const k of keys){
-    const v=u.searchParams.get(k);
-    const n=parsePos(v); if(n) return n;
-  }
-  if(u.hash){
-    const sp=new URLSearchParams(u.hash.replace(/^#/,""));
-    for(const k of keys){
-      const v=sp.get(k); const n=parsePos(v); if(n) return n;
+// URL'den sadece masa ID al (Token aramıyoruz artık)
+const extractMasa = () => {
+    const p = new URLSearchParams(location.search);
+    return parseInt(p.get("masa")) || null;
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    const okDiv = $("#ok");
+    const errDiv = $("#err");
+    const gpsBox = $("#gps-box"); // Ekranda varsa gizleyeceğiz
+    const btnHizli = $("#btnHizli");
+    const btnGiris = $("#btnGiris");
+    const masaChip = $("#masa-chip");
+
+    const masa = extractMasa();
+
+    // Sadece Masa ID yoksa hata ver
+    if(!masa){
+        errDiv.classList.remove("hidden");
+        if(gpsBox) gpsBox.style.display = 'none';
+        return;
     }
-  }
-  return null;
-}
 
-function setMasa(id){
-  sessionStorage.setItem("masa_id",String(id));
-  const chip=$("#masa-chip"); if(chip) chip.textContent="#"+id;
-}
+    // Masa ID'sini kaydet
+    sessionStorage.setItem("masa_id", masa);
+    
+    if(masaChip) masaChip.textContent = masa;
+    
+    // --- DEĞİŞİKLİK BURADA ---
+    // Konum (GPS) sormuyoruz.
+    // Token kontrolü yapmıyoruz.
+    // Direkt olarak başarı ekranını açıyoruz.
 
-document.addEventListener("DOMContentLoaded",()=>{
-  const ok=$("#ok"), err=$("#err");
-  const masa=extractMasa();
-  if(!masa){ err.classList.remove("hidden"); return; }
-  setMasa(masa);
-  ok.classList.remove("hidden");
+    if(gpsBox) gpsBox.style.display = 'none'; // "Konum aranıyor" kutusunu gizle
+    okDiv.classList.remove("hidden");         // Butonların olduğu alanı aç
 
-  // 🔒 Hızlı Sipariş = her zaman anonim (oturumu kapatıp gönderiyoruz)
-  $("#btnHizli")?.addEventListener("click", async ()=>{
-    try{ await fetch("/api/logout",{method:"POST",credentials:"include"}); }catch{}
-    location.href=`index.html?masa=${masa}`;
-  });
+    // Butonları aktif et
+    if(btnHizli) btnHizli.disabled = false;
+    if(btnGiris) btnGiris.disabled = false;
 
-  $("#btnGiris")?.addEventListener("click",()=>location.href=`login.html?masa=${masa}`);
+    // Yönlendirme Linkleri (Artık token parametresi eklemiyoruz)
+    const targetUrl = `?masa=${masa}`;
+    
+    if(btnHizli) {
+        btnHizli.addEventListener("click", async () => {
+            // İsteğe bağlı logout (önceki oturumu temizlemek için), hata verirse umursama
+            try { await fetch("/api/logout", {method:"POST"}); } catch{}
+            
+            // Token parametresi OLMADAN yönlendir
+            location.href = `index.html${targetUrl}`;
+        });
+    }
+
+    if(btnGiris) {
+        btnGiris.addEventListener("click", () => {
+            location.href = `login.html${targetUrl}`;
+        });
+    }
 });

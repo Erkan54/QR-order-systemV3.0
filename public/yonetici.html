@@ -4,14 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yönetici Paneli</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  
   <link rel="stylesheet" href="css/yonetici.css">
 </head>
 <body>
 <header class="topbar">
-  <h1>Yönetici Paneli</h1>
-  <div class="topbar-actions">
-    <button id="refresh" class="btn">Yenile</button>
-    <button id="logout" class="btn btn-danger">Çıkış</button>
+  <div class="header-left">
+    <h1 class="brand-title">
+      <span class="material-icons-round">settings</span>
+      Yönetici Paneli
+    </h1>
+  </div>
+  <div class="header-right">
+    <button id="refresh" class="btn-primary flex-btn">
+      <span class="material-icons-round">refresh</span> Yenile
+    </button>
+    <button id="logout" class="btn-danger flex-btn">
+      <span class="material-icons-round">logout</span> Çıkış
+    </button>
   </div>
 </header>
 
@@ -22,50 +35,95 @@
     <section class="card">
       <h2>Menü Yönetimi</h2>
 
-      <!-- Ürün ekleme formu -->
-      <div class="form-group">
-        <label for="kategoriSelect">Kategori</label>
-        <select id="kategoriSelect" class="input"></select>
+      <!-- Kompakt Ürün Ekleme Formu -->
+      <div class="add-product-form">
+        <div class="form-fields">
+          <div class="form-row">
+            <div class="form-group" style="flex:1.5;">
+              <label for="kategoriSelect">Kategori</label>
+              <select id="kategoriSelect" class="input"></select>
+            </div>
+            <div class="form-group" style="flex:2;">
+              <label for="urunAd">Ürün Adı</label>
+              <input type="text" id="urunAd" class="input" placeholder="Örn: Latte">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="flex:1;">
+              <label for="urunFiyat">Fiyat (₺)</label>
+              <input type="number" step="0.01" min="0" id="urunFiyat" class="input" placeholder="75">
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label for="urunMaliyet">Maliyet (₺)</label>
+              <input type="number" step="0.01" min="0" id="urunMaliyet" class="input" placeholder="Geliş">
+            </div>
+            <div class="form-group" style="flex:0.7;">
+              <label for="urunKdv">KDV (%)</label>
+              <input type="number" step="1" min="0" max="40" id="urunKdv" class="input" placeholder="10">
+            </div>
+          </div>
+
+          <!-- Varyasyon & Ekstra Satır İçi -->
+          <div class="saas-options-container">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <div style="flex: 1; min-width: 180px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <h4 style="margin:0; font-size:0.75rem; color:#666;">Varyasyonlar</h4>
+                  <button id="addVaryasyonBtn" class="btn btn-xs">+ Ekle</button>
+                </div>
+                <div id="varyasyonList" style="display:flex; flex-direction:column; gap:3px;"></div>
+              </div>
+              <div style="flex: 1; min-width: 180px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <h4 style="margin:0; font-size:0.75rem; color:#666;">Ekstralar</h4>
+                  <button id="addEkstraBtn" class="btn btn-xs">+ Ekle</button>
+                </div>
+                <div id="ekstraList" style="display:flex; flex-direction:column; gap:3px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:8px;">
+            <button id="urunEkleBtn" class="btn btn-primary">Ürün Ekle</button>
+          </div>
+        </div>
+
+        <!-- Sağ Taraf: Görsel Yükleme -->
+        <div class="form-visual">
+          <label style="display:block; margin-bottom:2px; font-size:0.7rem; color:#666;">Görsel</label>
+          <div class="drop-zone" id="dropZone">
+            <input type="file" id="urunResimFile" accept="image/*">
+            <div class="drop-icon">📷</div>
+            <div class="drop-text">Sürükle veya Tıkla</div>
+            <div class="drop-hint">JPG, PNG, WebP</div>
+          </div>
+          <div class="img-preview-container" id="imgPreviewContainer" style="display:none;">
+            <button type="button" class="remove-preview" id="removePreview">✕</button>
+            <img class="preview-img" id="previewImg" src="" alt="Önizleme">
+          </div>
+          <input type="hidden" id="urunResim">
+        </div>
       </div>
 
-      <div class="form-row">
-  <div class="form-group">
-    <label for="urunAd">Ürün Adı</label>
-    <input type="text" id="urunAd" class="input" placeholder="Örn: Latte">
-  </div>
-
-  <div class="form-group">
-    <label for="urunFiyat">Fiyat (₺)</label>
-    <input type="number" step="0.01" min="0" id="urunFiyat" class="input" placeholder="Örn: 75">
-  </div>
-
-  <div class="form-group">
-    <label for="urunKdv">KDV (%)</label>
-    <input type="number" step="1" min="0" max="40" id="urunKdv" class="input" placeholder="Örn: 10">
-  </div>
-
-  <div class="form-group form-group--button">
-    <button id="urunEkleBtn" class="btn btn-primary">Ürün Ekle</button>
-  </div>
-</div>
-
-
-      <hr>
+      <hr style="margin:10px 0; border:0; border-top:1px solid #eee;">
 
       <!-- Menü tablosu -->
       <div class="table-wrapper">
         <table>
               <thead>
-    <tr>
-      <th>Kategori</th>
-      <th>Ürün</th>
-      <th>Fiyat (₺)</th>
-      <th>KDV (%)</th>
-      <th>Aktif</th>
-      <th>Tükendi</th>
-      <th>İşlemler</th>
-    </tr>
-    </thead>
+<tr>
+  <th style="width:40px;"></th>
+  <th>Kategori</th>
+  <th>Ürün</th>
+  <th>Fiyat (₺)</th>
+  <th>Maliyet (₺)</th> 
+  <th>KDV (%)</th>
+  <th>Puan</th>
+  <th>Aktif</th>
+  <th>Tükendi</th>
+  <th>İşlemler</th>
+</tr>
+</thead>
 
           <tbody id="menuTableBody">
           <!-- JS dolduracak -->
@@ -77,66 +135,94 @@
     <!-- ========= KAMPANYA YÖNETİMİ ========= -->
     <section class="card">
       <h2>Kampanya Yönetimi</h2>
-
-      <!-- Kampanya formu -->
-      <div class="form-group">
-        <label for="kampAd">Kampanya Adı</label>
-        <input type="text" id="kampAd" class="input" placeholder="Örn: 5 kahve al 1 bedava">
+      <div class="form-row" style="margin-top: 10px; align-items:center;">
+        <input type="checkbox" id="uyelereOzel" style="width:20px; height:20px;">
+        <label for="uyelereOzel" style="margin-left:10px; font-weight:bold; cursor:pointer;">🔒 Sadece Üyelere Özel Olsun</label>
       </div>
 
+      <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
       <div class="form-row">
-        <div class="form-group">
-          <label for="gerekliPuan">Gerekli Puan</label>
-          <input type="number" id="gerekliPuan" class="input" min="1" value="5">
+        <div class="form-group" style="flex:2;">
+          <label for="kampAd">Kampanya Adı</label>
+          <input type="text" id="kampAd" class="input" placeholder="Örn: Tatlı yiyene Çay Bedava">
         </div>
-        <div class="form-group">
-          <label for="kampTur">Kampanya Türü</label>
-          <select id="kampTur" class="input">
-            <option value="ucretsiz_urun">Ücretsiz Ürün</option>
-            <option value="yuzde_indirim">Yüzde İndirim</option>
-            <option value="tutar_indirim">Tutar İndirimi</option>
-          </select>
+        <div class="form-group" style="flex:1;">
+          <label for="gerekliPuan">Gerekli Puan (0 = Fırsat)</label>
+          <input type="number" id="gerekliPuan" class="input" min="0" value="0">
         </div>
       </div>
+      <section class="card group-card">
+  <div class="card-header">
+    <h2>🧩 Kategori Havuzu Oluştur</h2>
+    <p class="subtitle">Birden fazla kategoriyi birleştirerek müşteriye "Seçmeli Menü" sunabilirsiniz.</p>
+  </div>
 
-      <!-- Dinamik alanlar -->
-      <div id="kmp-ucretsiz" class="kamp-opt">
-        <label for="kampOdulUrun">Ödül Ürün</label>
-        <select id="kampOdulUrun" class="input"></select>
+  <div class="group-form-container">
+    <div class="form-group" style="flex: 1;">
+      <label for="grupAd">Grup Adı</label>
+      <input type="text" id="grupAd" class="clean-input" placeholder="Örn: Tatlı veya Kahve Seçimi">
+    </div>
+
+    <div class="form-group" style="flex: 1.5; position: relative;">
+      <label>Dahil Olacak Kategoriler</label>
+      
+      <div class="custom-dropdown" id="catDropdownContainer">
+        <div class="dropdown-trigger" onclick="toggleDropdown()">
+          <span id="dropdownLabel">Kategori Seçiniz...</span>
+          <span class="arrow">▼</span>
+        </div>
+
+        <div class="dropdown-menu hidden" id="catCheckboxList">
+          </div>
       </div>
+    </div>
 
-      <div id="kmp-yuzde" class="kamp-opt" style="display:none;">
-        <label for="kampIndirimOran">İndirim Oranı (%)</label>
-        <input type="number" id="kampIndirimOran" class="input" min="1" max="100" placeholder="Örn: 20">
-      </div>
+    <div class="form-group form-action">
+      <button id="grupEkleBtn" class="btn btn-clean">
+        Oluştur
+      </button>
+    </div>
+  </div>
 
-      <div id="kmp-tutar" class="kamp-opt" style="display:none;">
-        <label for="kampIndirimTutar">İndirim Tutarı (₺)</label>
-        <input type="number" id="kampIndirimTutar" class="input" min="1" placeholder="Örn: 30">
-      </div>
+  <div class="divider"></div>
 
-      <div class="form-row form-row--end">
-        <button id="kampEkleBtn" class="btn btn-primary">Kampanya Ekle</button>
+  <div class="group-list-wrapper">
+    <h4>Mevcut Havuzlar</h4>
+    <ul id="grupListesi" class="clean-list">
+      </ul>
+  </div>
+</section>
+      <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+      <h4 style="margin: 0 0 10px 0; font-size: 0.9rem; color: #666;">1. KOŞULLAR (Tetikleyiciler)</h4>
+      <div id="kosullar-container">
+        </div>
+      <button id="addKosulBtn" class="btn btn-xs" style="margin-bottom: 15px;">+ Koşul Ekle</button>
+
+      <h4 style="margin: 0 0 10px 0; font-size: 0.9rem; color: #666;">2. ÖDÜLLER (Hediyeler)</h4>
+      <div id="oduller-container">
+        </div>
+      <button id="addOdulBtn" class="btn btn-xs" style="margin-bottom: 15px;">+ Ödül Ekle</button>
+
+      <div class="form-row form-row--end" style="margin-top: 20px;">
+        <button id="kampEkleBtn" class="btn btn-primary">Kampanyayı Kaydet</button>
       </div>
 
       <hr>
 
-      <!-- Kampanya tablosu -->
       <div class="table-wrapper">
         <table>
           <thead>
           <tr>
-            <th>Ad</th>
-            <th>Tür</th>
-            <th>Puan</th>
-            <th>Ödül / İndirim</th>
-            <th>Aktif</th>
-            <th class="right">İşlemler</th>
+            <th>ID</th>
+            <th>Kampanya Adı</th>
+            <th>Tür (Puan)</th>
+            <th>Koşullar</th>
+            <th>Ödüller</th>
+            <th class="right">İşlem</th>
           </tr>
           </thead>
           <tbody id="kampanyaTableBody">
-          <!-- JS dolduracak -->
-          </tbody>
+            </tbody>
         </table>
       </div>
     </section>
@@ -144,6 +230,57 @@
   </div>
 </main>
 
+<!-- ========================= -->
+<!-- ÜRÜN DÜZENLE MODALI -->
+<!-- ========================= -->
+<div id="editProductModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+  <div class="card" style="width:90%; max-width:800px; max-height:90vh; overflow-y:auto; position:relative; padding:25px; margin:auto; margin-top:5vh;">
+    <button class="btn btn-danger btn-xs" onclick="document.getElementById('editProductModal').style.display='none'" style="position:absolute; top:15px; right:15px; border-radius:50%; width:30px; height:30px;">X</button>
+    <h2 style="margin-top:0;">Ürün Düzenle</h2>
+    
+    <input type="hidden" id="editUrunId">
+    
+    <div class="form-row">
+      <div class="form-group" style="flex:2;">
+        <label>Ürün Adı</label>
+        <input type="text" id="editUrunAd" class="input">
+      </div>
+      <div class="form-group" style="flex:3;">
+        <label>Görsel URL</label>
+        <input type="text" id="editUrunResim" class="input" placeholder="https://...">
+      </div>
+    </div>
+    
+    <div class="saas-options-container" style="margin-top:20px; padding:15px; border:1px dashed #ccc; border-radius:8px; background:#fdfdfd;">
+      <div style="display:flex; gap:20px; flex-wrap:wrap;">
+        <!-- Varyasyonlar -->
+        <div style="flex:1; min-width:250px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h4 style="margin:0;">Varyasyonlar</h4>
+            <button id="editAddVaryasyonBtn" class="btn btn-xs">+ Ekle</button>
+          </div>
+          <div id="editVaryasyonList" style="display:flex; flex-direction:column; gap:5px;"></div>
+        </div>
+
+        <!-- Ekstralar -->
+        <div style="flex:1; min-width:250px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h4 style="margin:0;">Ekstralar / Çıkarılacaklar</h4>
+            <button id="editAddEkstraBtn" class="btn btn-xs">+ Ekle</button>
+          </div>
+          <div id="editEkstraList" style="display:flex; flex-direction:column; gap:5px;"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div style="margin-top:20px; text-align:right;">
+      <button class="btn" onclick="document.getElementById('editProductModal').style.display='none'">İptal</button>
+      <button id="saveEditProductBtn" class="btn btn-primary" style="margin-left:10px;">Kaydet</button>
+    </div>
+  </div>
+</div>
+
 <script src="yonetici.js"></script>
+<script src="auth-guard.js"></script>
 </body>
 </html>

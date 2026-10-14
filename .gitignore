@@ -1,2 +1,10 @@
 node_modules/
 .env
+.env.*
+!.env.example
+*.log
+*.sql
+!database/schema.sql
+public/adisyonlar/
+*.pdf
+.DS_Store

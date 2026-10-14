@@ -4,39 +4,90 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sipariş Takip Paneli</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
 
-  <header>
-    <h1>🧾 Sipariş Takip Paneli</h1>
-    <button id="refresh">🔄 Yenile</button>
-    <button id="temizleBtn" class="clear-btn">🧹 Temizle</button>
+  <header class="topbar">
+    <div class="header-left">
+      <h1 class="brand-title">
+        <span class="material-icons-round">receipt_long</span>
+        Yönetici Paneli
+      </h1>
+      <div class="view-switch">
+        <button id="btnViewList" class="switch-btn active">
+          <span class="material-icons-round">format_list_bulleted</span> Liste
+        </button>
+        <button id="btnViewGrid" class="switch-btn">
+          <span class="material-icons-round">grid_view</span> Salon
+        </button>
+      </div>
+    </div>
+    
+    <div class="header-right">
+      <button id="refresh" class="btn-primary flex-btn">
+        <span class="material-icons-round">refresh</span> Yenile
+      </button>
+      <button id="temizleBtn" class="clear-btn flex-btn">
+        <span class="material-icons-round">delete_sweep</span> Temizle
+      </button>
+    </div>
   </header>
 
-  <main>
-    <table id="orders-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Masa</th>
-          <th>Durum</th>
-          <th>Tarih</th>
-          <th>Toplam</th>
-          <th>Ürünler</th>
-          <th>İşlem</th>
-        </tr>
-      </thead>
-      <tbody id="orders-body">
-        <!-- JS ile doldurulacak -->
-      </tbody>
-    </table>
+  <main class="content-container">
+    <div id="view-list-container" class="card">
+      <div class="panel-header">
+        <span class="material-icons-round">receipt</span> Canlı Sipariş Listesi
+      </div>
+      <div class="table-responsive">
+        <table class="data-table" id="orders-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Masa</th>
+              <th>Durum</th>
+              <th>Zaman</th>
+              <th>Not</th>
+              <th>Tutar</th>
+              <th style="text-align: left;">Ürün Detayları</th>
+              <th>İşlem</th>
+            </tr>
+          </thead>
+          <tbody id="orders-body">
+            <tr><td colspan="8" class="text-center">Yükleniyor...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="view-grid-container" class="hidden">
+      <div class="card" style="padding: 24px;">
+        <h3 style="margin-bottom: 20px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; color: var(--text-dark);">
+          <span class="material-icons-round">chair</span> Salon Yerleşim Planı
+        </h3>
+        <div class="floor-plan" id="floor-plan">
+          <p style="text-align:center; width:100%;">Masalar yükleniyor...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- YAN DETAY PANELİ -->
+    <div id="sidePanel" class="side-panel">
+      <div class="sp-header">
+        <h2 id="sp-masa-title">Masa Detayı</h2>
+        <button id="sp-close" class="close-btn">&times;</button>
+      </div>
+      <div class="sp-body" id="sp-content"></div>
+      <div class="sp-footer" id="sp-actions"></div>
+    </div>
+    <div id="sideOverlay" class="side-overlay hidden"></div>
   </main>
 
-  <footer>
-    <p>© 2025 QR Sipariş Sistemi</p>
-  </footer>
-
   <script src="admin.js"></script>
+  <script src="auth-guard.js"></script>
 </body>
 </html>

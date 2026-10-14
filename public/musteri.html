@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Müşteri Yönetimi – CRM</title>
+  <link rel="stylesheet" href="css/yonetici.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── GENEL OVERRIDE ── */
+    body { font-family: 'Inter', 'Outfit', sans-serif; }
+
+    /* ── CRM HEADER ── */
+    .crm-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+    }
+    .crm-header-left { display: flex; align-items: center; gap: 16px; }
+    .back-link {
+      text-decoration: none; color: var(--text-gray); font-weight: 600;
+      display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem;
+      padding: 8px 14px; border-radius: 10px; background: var(--card-bg);
+      border: 1px solid var(--border); transition: all 0.2s;
+    }
+    .back-link:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-1px); }
+    .crm-title { font-size: 1.25rem; font-weight: 700; color: var(--text-dark); }
+
+    /* ── STAT KARTLARI ── */
+    .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--card-bg); border-radius: var(--radius-m); padding: 20px;
+      border: 1px solid var(--border); position: relative; overflow: hidden;
+      transition: all 0.25s;
+    }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+    .stat-card .stat-icon {
+      width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center;
+      justify-content: center; font-size: 1.3rem; margin-bottom: 12px;
+    }
+    .stat-card .stat-value { font-size: 1.6rem; font-weight: 700; color: var(--text-dark); line-height: 1; }
+    .stat-card .stat-label { font-size: 0.78rem; color: var(--text-gray); margin-top: 4px; font-weight: 500; }
+
+    /* ── BADGE ── */
+    .badge-puan {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #78350f;
+      padding: 3px 10px; border-radius: 20px; font-weight: 700; font-size: 0.78rem;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+
+    /* ── AKSIYON BUTONLARI ── */
+    .action-btn {
+      appearance: none; border: none; padding: 7px 12px; border-radius: 8px;
+      font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex;
+      align-items: center; gap: 5px; transition: all 0.2s; font-family: inherit;
+      text-decoration: none;
+    }
+    .action-btn:hover { transform: translateY(-1px); }
+
+    .action-btn-copy { background: #f0f1f3; color: #374151; }
+    .action-btn-copy:hover { background: #e2e4e8; }
+    .action-btn-copy.copied { background: #d1fae5; color: #065f46; }
+
+    .action-btn-wa {
+      background: #25D366; color: white;
+    }
+    .action-btn-wa:hover { background: #1da851; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
+
+    /* ── TOPLU BUTON ── */
+    .bulk-btn {
+      appearance: none; border: none; padding: 10px 20px; border-radius: 12px;
+      font-size: 0.85rem; font-weight: 700; cursor: pointer; display: inline-flex;
+      align-items: center; gap: 8px; font-family: inherit;
+      background: linear-gradient(135deg, #25D366, #128C7E); color: white;
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.25); transition: all 0.25s;
+    }
+    .bulk-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(37, 211, 102, 0.35); }
+
+    /* ── TABLO GÜZELLEŞTİRME ── */
+    .crm-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .crm-table thead th {
+      background: #f8f9fb; color: var(--text-gray); font-size: 0.72rem;
+      text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
+      padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0;
+    }
+    .crm-table tbody tr {
+      transition: background 0.15s;
+    }
+    .crm-table tbody tr:hover { background: #f8f9fb; }
+    .crm-table tbody td {
+      padding: 12px 14px; border-bottom: 1px solid #f3f4f6;
+      font-size: 0.85rem; vertical-align: middle;
+    }
+    .crm-table .customer-name { font-weight: 600; color: var(--text-dark); }
+    .crm-table .customer-tel { font-family: 'Inter', monospace; font-weight: 500; color: #475569; letter-spacing: 0.3px; }
+    .crm-table .customer-email { color: var(--text-gray); font-size: 0.82rem; }
+    .crm-table .customer-date { color: var(--text-gray); font-size: 0.8rem; }
+    .crm-table .customer-id { color: #94a3b8; font-weight: 600; font-size: 0.8rem; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 9999; animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .modal-box {
+      background: white; border-radius: 20px; width: 92%; max-width: 520px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.2); animation: slideUp 0.3s ease;
+      overflow: hidden;
+    }
+    .modal-header {
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      padding: 24px 28px; color: white;
+    }
+    .modal-header h3 { margin: 0; font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .modal-header p { margin: 6px 0 0; font-size: 0.82rem; opacity: 0.9; line-height: 1.4; }
+
+    .modal-body { padding: 24px 28px; }
+
+    .option-group { margin-bottom: 16px; }
+    .option-group-title {
+      font-weight: 600; font-size: 0.75rem; color: var(--text-gray);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+    }
+    .option-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .option-pill {
+      flex: 1; min-width: 120px; border: 1.5px solid #e2e8f0; padding: 10px 14px;
+      border-radius: 10px; cursor: pointer; display: flex; align-items: center;
+      gap: 8px; font-size: 0.82rem; background: #fafbfc; transition: all 0.15s;
+      font-weight: 500; color: #475569;
+    }
+    .option-pill:hover { border-color: #25D366; background: #f0fdf4; }
+    .option-pill input[type="radio"],
+    .option-pill input[type="checkbox"] { accent-color: #25D366; }
+    .option-pill:has(input:checked) {
+      border-color: #25D366; background: #f0fdf4; color: #166534;
+    }
+
+    .numbers-area {
+      width: 100%; height: 140px; font-family: 'Inter', monospace; font-size: 0.82rem;
+      resize: none; box-sizing: border-box; background: #f8fafc; border: 1.5px solid #e2e8f0;
+      border-radius: 12px; padding: 12px; color: #334155; line-height: 1.6;
+      outline: none; transition: border-color 0.2s;
+    }
+    .numbers-area:focus { border-color: #25D366; }
+
+    .numbers-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 8px; margin-bottom: 20px;
+    }
+    .numbers-count {
+      background: #f1f5f9; color: #64748b; padding: 4px 12px; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 600;
+    }
+
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; }
+    .modal-btn {
+      appearance: none; border: none; padding: 10px 20px; border-radius: 10px;
+      font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: inherit;
+      display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;
+    }
+    .modal-btn:hover { transform: translateY(-1px); }
+    .modal-btn-ghost { background: #f1f5f9; color: #475569; }
+    .modal-btn-ghost:hover { background: #e2e8f0; }
+    .modal-btn-primary {
+      background: linear-gradient(135deg, #25D366, #128C7E); color: white;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+    }
+    .modal-btn-primary:hover { box-shadow: 0 6px 25px rgba(37, 211, 102, 0.4); }
+
+    /* ── TOAST ── */
+    .toast-container {
+      position: fixed; bottom: 24px; right: 24px; z-index: 99999;
+      display: flex; flex-direction: column-reverse; gap: 10px;
+    }
+    .toast {
+      background: var(--text-dark); color: white; padding: 12px 20px;
+      border-radius: 12px; font-size: 0.85rem; font-weight: 500;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15); animation: toastIn 0.3s ease;
+      max-width: 380px;
+    }
+    .toast.success { background: #059669; }
+    .toast.error { background: #dc2626; }
+    @keyframes toastIn { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    .hidden { display: none !important; }
+
+    /* ── TEL YOK BADGE ── */
+    .no-tel { color: #cbd5e1; font-size: 0.8rem; font-style: italic; }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <h1>Müşteri Yönetimi</h1>
+  <div class="topbar-actions">
+    <button onclick="window.location.reload()" class="btn">↻ Yenile</button>
+    <button onclick="logout()" class="btn btn-danger">Çıkış</button>
+  </div>
+</header>
+
+<main class="main">
+  <div class="container" style="max-width: 1200px; margin: 0 auto;">
+    
+    <div class="crm-header">
+      <div class="crm-header-left">
+        <a href="yonetici.html" class="back-link">← Geri Dön</a>
+        <span class="crm-title">Müşteri CRM</span>
+      </div>
+      <button class="bulk-btn" onclick="acCopyModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        Toplu WhatsApp Mesajı
+      </button>
+    </div>
+
+    <!-- STAT KARTLARI -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-icon" style="background: #ede9fe; color: #7c3aed;">👥</div>
+        <div class="stat-value" id="statToplam">–</div>
+        <div class="stat-label">Toplam Müşteri</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: #dcfce7; color: #16a34a;">📱</div>
+        <div class="stat-value" id="statTelefon">–</div>
+        <div class="stat-label">Telefon Kayıtlı</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: #fef3c7; color: #d97706;">⭐</div>
+        <div class="stat-value" id="statToplamPuan">–</div>
+        <div class="stat-label">Toplam Puan</div>
+      </div>
+    </div>
+
+    <!-- TABLO -->
+    <section class="card" style="padding: 0; overflow: hidden;">
+      <div style="padding: 20px 24px 0; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="margin: 0; font-size: 1rem; font-weight: 700;">Kayıtlı Müşteriler</h2>
+        <input type="text" id="searchInput" class="input" placeholder="🔍 Müşteri ara..." style="max-width: 250px; font-size: 0.82rem;" oninput="filterTable()">
+      </div>
+      <div class="table-wrapper" style="margin-top: 16px;">
+        <table class="crm-table">
+          <thead>
+            <tr>
+               <th>ID</th>
+               <th>Müşteri</th>
+               <th>Telefon</th>
+               <th>E-Posta</th>
+               <th>Puan</th>
+               <th>Kayıt</th>
+               <th style="text-align:right;">İşlemler</th>
+            </tr>
+          </thead>
+          <tbody id="musteriTableBody">
+            <tr><td colspan="7" style="text-align: center; padding: 40px; color: #94a3b8;">Yükleniyor...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- ── TOPLU KOPYALAMA MODALI ── -->
+<div id="copyModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        Toplu WhatsApp Mesajı
+      </h3>
+      <p>Numaralar kopyalanıp WhatsApp Web açılacak. Oradan "Yeni Mesaj" kısmına yapıştırarak toplu gönderin.</p>
+    </div>
+
+    <div class="modal-body">
+      <div class="option-group">
+        <div class="option-group-title">Ayırıcı Format</div>
+        <div class="option-pills">
+          <label class="option-pill">
+            <input type="radio" name="separator" value="newline" checked onchange="updateCopyText()">
+            <span>Alt Alta (Satır)</span>
+          </label>
+          <label class="option-pill">
+            <input type="radio" name="separator" value="comma" onchange="updateCopyText()">
+            <span>Virgülle Ayrılmış</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <div class="option-group-title">Numara Düzeltme</div>
+        <div class="option-pills">
+          <label class="option-pill">
+            <input type="checkbox" id="addCountryCode" checked onchange="updateCopyText()">
+            <span>+90 Ekle (TR)</span>
+          </label>
+          <label class="option-pill">
+            <input type="checkbox" id="cleanNonNumeric" checked onchange="updateCopyText()">
+            <span>Sadece Rakamlar</span>
+          </label>
+        </div>
+      </div>
+
+      <textarea id="numbersTextArea" class="numbers-area" readonly></textarea>
+      <div class="numbers-meta">
+        <span id="numbersCountBadge" class="numbers-count">0 numara</span>
+      </div>
+
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn-ghost" onclick="kapatCopyModal()">Vazgeç</button>
+        <button class="modal-btn modal-btn-primary" onclick="kopyalaVeWhatsAppAc()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          Kopyala & WhatsApp'a Git
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ── MÜŞTERİ DETAY VE PUAN GEÇMİŞİ MODALI ── -->
+<div id="detailModal" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width: 700px;">
+    <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+      <h3>
+        🔍 <span id="detailMusteriAd">Müşteri Detayı</span>
+      </h3>
+      <p>Müşterinin sipariş ve puan geçmişini görüntüleyin, isterseniz puan ayarlaması yapın.</p>
+    </div>
+
+    <div class="modal-body">
+      <!-- Üst Bilgi & Puan Ayarlama -->
+      <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <div style="font-size: 0.8rem; color: var(--text-gray); font-weight: 600; text-transform: uppercase;">Mevcut Puan</div>
+          <div style="font-size: 1.8rem; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 6px;">
+            ⭐ <span id="detailMusteriPuan">0</span>
+          </div>
+        </div>
+        
+        <div style="display: flex; align-items: flex-end; gap: 8px;">
+          <div style="display: flex; flex-direction: column;">
+            <label for="yeniPuanInput" style="font-weight: 600; font-size: 0.8rem; color: #555; margin-bottom: 4px;">Puanı Manuel Güncelle:</label>
+            <input type="number" id="yeniPuanInput" class="input" style="width: 120px; font-size: 0.85rem;" min="0">
+          </div>
+          <button class="btn btn-primary" style="background: #3b82f6; border-color: #3b82f6; padding: 8px 16px;" onclick="guncelleMusteriPuanManuel()">Kaydet</button>
+        </div>
+      </div>
+
+      <!-- Sipariş / Puan Geçmişi Listesi -->
+      <div class="option-group-title">Sipariş & Puan Geçmişi</div>
+      <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 20px; background: #fff;">
+        <table class="crm-table" style="margin: 0; width: 100%;">
+          <thead>
+            <tr style="background: #f8fafc;">
+               <th style="font-size: 0.7rem; padding: 10px;">Tarih / Sipariş ID</th>
+               <th style="font-size: 0.7rem; padding: 10px;">Ürünler / Kampanyalar</th>
+               <th style="font-size: 0.7rem; padding: 10px; text-align: center;">Puan Durumu</th>
+               <th style="font-size: 0.7rem; padding: 10px; text-align: center;">Durum</th>
+               <th style="font-size: 0.7rem; padding: 10px; text-align: right;">Aksiyon</th>
+            </tr>
+          </thead>
+          <tbody id="detailGecmisTbody">
+            <!-- Dinamik doldurulacak -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer" style="margin-top: 0;">
+        <button class="modal-btn modal-btn-ghost" onclick="kapatDetailModal()">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<a id="wrappedBtn" href="wrapped.html" style="display: none; position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); background-color: #1DB954; color: white; padding: 15px 30px; border-radius: 50px; text-decoration: none; font-family: sans-serif; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 9999; transition: transform 0.2s;">
+    Wrapped Özetini Gör 🚀
+</a>
+
+<script src="musteri.js"></script>
+<script src="auth-guard.js"></script>
+<script>
+  async function logout() {
+    await fetch("/api/logout", { method: "POST" });
+    window.location.href = "start.html";
+  }
+</script>
+</body>
+</html>

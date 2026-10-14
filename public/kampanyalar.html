@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kampanya ve Puan Sistemi</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Bu sayfaya özel stiller */
+    body { background: #f8fafc; padding: 20px; }
+    .info-card { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+    .step-list { counter-reset: step; list-style: none; padding: 0; }
+    .step-list li { position: relative; padding-left: 40px; margin-bottom: 15px; }
+    .step-list li::before {
+      counter-increment: step; content: counter(step);
+      position: absolute; left: 0; top: 0;
+      width: 30px; height: 30px; background: var(--primary); color: #fff;
+      border-radius: 50%; text-align: center; line-height: 30px; font-weight: bold;
+    }
+    .puan-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .puan-table th, .puan-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+    .puan-table th { background: #f1f5f9; color: #555; font-size: 0.85rem; text-transform: uppercase; }
+    .high-score { color: #d35400; font-weight: bold; }
+    .back-btn { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #555; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <div class="container" style="max-width: 600px; margin: 0 auto;">
+    
+    <a href="javascript:history.back()" class="back-btn">← Geri Dön</a>
+
+    <h2 style="margin-top:0;">🎁 Nasıl Çalışır?</h2>
+
+    <div class="info-card">
+      <h3 style="margin-top:0; color:var(--primary);">Puan Sistemi</h3>
+      <ul class="step-list">
+        <li><strong>Üye Olun veya Giriş Yapın:</strong> Puan kazanmak için sipariş vermeden önce giriş yapmalısınız.</li>
+        <li><strong>Sipariş Verin:</strong> Her ürünün kendine özel bir puan değeri vardır (Aşağıdaki listede görebilirsiniz).</li>
+        <li><strong>Puanları Toplayın:</strong> Siparişiniz teslim edildiğinde puanlar hesabınıza otomatik yüklenir.</li>
+        <li><strong>Harcayın:</strong> Biriktirdiğiniz puanlarla "Kampanya Seç" menüsünden bedava ürünler alın!</li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h3 style="margin-top:0; color:var(--primary);">Hangi Ürün Kaç Puan?</h3>
+      <p style="font-size:0.9rem; color:#666;">Aşağıdaki puanlar, sipariş başına değil, o üründen her bir adet sipariş ettiğinizde kazanacağınız miktardır.</p>
+      
+      <table class="puan-table">
+        <thead>
+          <tr>
+            <th>Ürün Adı</th>
+            <th style="text-align:right;">Kazanılacak Puan</th>
+          </tr>
+        </thead>
+        <tbody id="puanListBody">
+          <tr><td colspan="2">Yükleniyor...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    // Sayfa açılınca ürünleri çek ve tabloyu doldur
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const res = await fetch("/api/menu");
+        if(!res.ok) throw new Error("Hata");
+        const grouped = await res.json();
+        
+        const tbody = document.getElementById("puanListBody");
+        tbody.innerHTML = "";
+
+        // Tüm kategorileri dolaş
+        Object.keys(grouped).forEach(kat => {
+          // Kategori başlığı (Opsiyonel, tabloyu uzatabilir)
+          // tbody.innerHTML += `<tr><td colspan="2" style="background:#fafafa; font-weight:bold;">${kat}</td></tr>`;
+
+          grouped[kat].forEach(item => {
+            const puan = item.puan_degeri || 1;
+            const style = puan > 1 ? 'class="high-score"' : '';
+            
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${item.urun_adi}</td>
+              <td style="text-align:right;" ${style}>+${puan} Puan</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        });
+
+      } catch (e) {
+        document.getElementById("puanListBody").innerHTML = "<tr><td colspan='2' style='color:red'>Liste yüklenemedi.</td></tr>";
+      }
+    });
+  </script>
+
+</body>
+</html>

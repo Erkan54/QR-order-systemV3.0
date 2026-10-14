@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kullanıcı Sözleşmesi – QR Sipariş</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0aa07a;
+      --bg-color: #f4f6f9;
+      --text-main: #2d3436;
+      --text-muted: #636e72;
+      --card-bg: #ffffff;
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 40px 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 40px;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eefbf6;
+      padding-bottom: 10px;
+    }
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      color: var(--text-main);
+    }
+    p, li {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 15px;
+    }
+    ul {
+      padding-left: 20px;
+      margin-bottom: 20px;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: transform 0.2s;
+    }
+    .back-btn:hover {
+      transform: translateX(-3px);
+    }
+    @media (max-width: 600px) {
+      body { padding: 20px 10px; }
+      .container { padding: 20px; }
+      h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="javascript:window.close();" class="back-btn">← Pencereyi Kapat</a>
+    <h1>Kullanıcı Sözleşmesi</h1>
+    <p>Son Güncelleme: 22 Temmuz 2026</p>
+    
+    <p>Lütfen QR Sipariş sistemini kullanmadan önce bu Kullanıcı Sözleşmesi'ni dikkatlice okuyunuz. Bu sistemi kullanan tüm kullanıcılar, aşağıdaki şartları kabul etmiş sayılır.</p>
+    
+    <h2>1. Taraflar</h2>
+    <p>İşbu sözleşme, QR Sipariş altyapısını işleten işletme (bundan sonra "İşletme" olarak anılacaktır) ile sistemi kullanarak sipariş oluşturan, kayıt olan müşteri (bundan sonra "Kullanıcı" olarak anılacaktır) arasında akdedilmiştir.</p>
+    
+    <h2>2. Hizmetin Tanımı</h2>
+    <p>QR Sipariş; kullanıcıların masa üzerinde bulunan karekodları taratarak veya tarayıcı üzerinden dijital menüye ulaşmasını, sipariş vermesini, sadakat puanları toplamasını ve bu puanları kullanmasını sağlayan bir web tabanlı dijital sipariş yönetim sistemidir.</p>
+    
+    <h2>3. Kullanıcının Hak ve Yükümlülükleri</h2>
+    <ul>
+      <li>Kullanıcı, sisteme üye olurken verdiği bilgilerin (Ad Soyad, E-posta, Telefon vb.) doğru ve güncel olduğunu taahhüt eder.</li>
+      <li>Kullanıcı, sadakat puanlarını hileli yollarla artırmaya çalışmayacağını, sahte siparişler oluşturmayacağını kabul eder. Hileli işlemler tespit edildiğinde, kullanıcının hesabı askıya alınabilir ve kazanılan puanlar silinebilir.</li>
+      <li>Sistem üzerinden verilen siparişlerin ödeme yükümlülüğü Kullanıcı'ya aittir.</li>
+    </ul>
+
+    <h2>4. İşletmenin Hak ve Yükümlülükleri</h2>
+    <ul>
+      <li>İşletme, sistemin kesintisiz ve güvenli bir şekilde çalışması için gerekli teknik altyapıyı sağlamakla yükümlüdür.</li>
+      <li>İşletme, kampanya koşullarını, ürün fiyatlarını ve puan oranlarını önceden haber vermeksizin değiştirme hakkını saklı tutar.</li>
+    </ul>
+
+    <h2>5. Yürürlük ve Fesih</h2>
+    <p>Kullanıcı, sisteme kayıt olduğu andan itibaren işbu sözleşmenin tüm şartlarını kabul etmiş sayılır. Sözleşme, kullanıcının üyeliğini iptal etmesi veya İşletme tarafından üyeliğinin sonlandırılmasına kadar yürürlükte kalacaktır.</p>
+  </div>
+</body>
+</html>

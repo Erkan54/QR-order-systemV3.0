@@ -60,13 +60,20 @@
           </div>
 
           <div class="input-group">
-            <label for="telefon">Telefon <span class="optional">(İsteğe bağlı)</span></label>
-            <input type="text" id="telefon" name="telefon" placeholder="0555..." />
+            <label for="telefon">Telefon </label>
+            <input type="text" id="telefon" name="telefon" placeholder="0555..." required/>
           </div>
 
           <div class="input-group">
             <label for="sifre">Şifre</label>
             <input type="password" id="sifre" name="sifre" placeholder="••••••••" required />
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="kvkk" required />
+            <label for="kvkk">
+              <a href="sozlesme.html" target="_blank">Kullanıcı Sözleşmesi</a>'ni ve <a href="kvkk.html" target="_blank">KVKK Aydınlatma Metni</a>'ni okudum, kabul ediyorum.
+            </label>
           </div>
 
           <button type="submit" class="btn primary btn-lg">Hesap Oluştur</button>
