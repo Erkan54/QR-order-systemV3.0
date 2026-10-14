@@ -28,3 +28,15 @@ Kafe ve restoranlar için dijital QR menü, masa siparişi, müşteri ekranları
 Gerçek `.env`, müşteri/sipariş satırları içeren SQL yedekleri, adisyon PDF'leri ve `node_modules` paylaşılmaz. `database/schema.sql` yalnızca tablo yapıları içerir. Firebase veya bulut dağıtımı otomatik yapılmaz.
 
 Bu aktarım kaynak kodunun korunmasına odaklanır. Mevcut kullanıcı girişi ve oturum tasarımının üretim güvenliği ayrıca incelenmelidir; yalnızca JavaScript sözdizimi doğrulaması uçtan uca işletme testi sayılmaz.
+
+## Kaynak haritası ve sürüm ilişkisi
+
+| Konum | Sorumluluk |
+| --- | --- |
+| [`server.js`](server.js) | Express REST uçları, oturumlar ve MySQL işlemleri |
+| [`public/`](public/) | Müşteri, yönetici ve işletme sahibi ekranları |
+| [`database/schema.sql`](database/schema.sql) | Veri satırı içermeyen 20 tablo tanımı |
+| [`.env.example`](.env.example) | Yerel ortam değişkenlerinin örneği |
+| [`seed_varyasyon.js`](seed_varyasyon.js) | Mevcut ürünler için varyasyon yardımcısı |
+
+Sürüm ailesinin önceki kaynakları [V2 arşivi](https://github.com/Erkan54/QR-order-systemV2.0) ve [sunucu prototipi](https://github.com/Erkan54/QR-order-system) depolarındadır. Repo/sürüm adları tarihsel arşivi temsil eder; eski depolardaki paket sürümleriyle karıştırılmamalıdır. Bu README düzenlemesi canlı bir sunucuyu veya veritabanını güncellemez.
